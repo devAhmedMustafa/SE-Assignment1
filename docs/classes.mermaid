@@ -1,0 +1,333 @@
+classDiagram
+
+    class AppMachine {
+        - instance : AppMachine
+        - constructor() void
+        + getInstance() AppMachine
+
+        - currentState : AppState
+        + changeState(newState : STATE) void
+        + run() void
+    }
+
+    class AppState {
+        <<interface>>
+        + onEnter() void
+        + onExecute() void
+        + onExit() void
+    }
+
+    class STATE {
+        <<enumeration>>
+
+    }
+
+    class StateMapper {
+        + stateMap : Map~STATE, AppState~
+        + getState(stateName : STATE) AppState
+    }
+
+    AppMachine "1" -- "1" AppState
+    AppMachine -- StateMapper
+
+    class UI {
+        - instance : UI
+        - constructor() void
+        + getInstance() UI
+
+        - mode : bool
+
+        - parser : CommandParser
+        - commandMapper : CommandMapper
+
+        + promptUserInput(prompt : string) void
+    }
+
+    UI "1" -- "1" CommandParser
+    UI "1" -- "1" CommandMapper
+
+    class CommandParser {
+        - command: string
+        - arguments: List~string~
+        + parseCommand(command : string) void
+        + getCommand() string
+        + getArguments() List~string~
+    }
+
+    class CommandMapper {
+        - menuUI : MenuUI
+        - cartUI : CartUI
+        - itemUI : ItemUI
+        + commandMap : Map~string, Function~
+    }
+
+    CommandMapper "1" -- "1" MenuUI
+    CommandMapper "1" -- "1" CartUI
+    CommandMapper "1" -- "1" ItemUI
+
+    class ItemUI {
+        + addItem(name : string, basePrice : int, category : Category) Item
+    }
+
+    ItemUI -- ItemRepository
+    ItemUI -- CategoryRepository
+    ItemUI -- CustomizationAddonRepository
+
+    class MenuUI {
+        + displayMenus(menus : List~Menu~) void
+        + createMenu(title : string, description : string, items : List~Item~) Menu
+    }
+
+    MenuUI -- MenuRepository
+
+    class CartUI {
+        + displayCart(cart : Cart) void
+        + addItemToCart(item : Item, quantity : int) void
+        + removeItemFromCart(item : Item) void
+        + updateItemQuantityInCart(item : Item, quantity : int) void
+    }
+
+    CartUI -- Cart
+
+    class Cart {
+        - instance : Cart
+        - constructor() void
+        + getInstance() Cart
+        + items : Map~Item, int~
+        + addItem(item : Item, quantity : int) void
+        + removeItem(item : Item) void
+        + updateItemQuantity(item : Item, quantity : int) void
+        + calculateTotal() int
+    }
+
+    Cart "1" --* "*" Item
+
+    class CheckoutManager {
+        - instance : CheckoutManager
+        - constructor() void
+        + getInstance() CheckoutManager
+        + checkout(customerName : string, orderType : ORDER_TYPE, paymentMethod: string) void
+    }
+
+    CheckoutManager -- Cart
+    CheckoutManager -- PaymentProcessor
+
+    class Item {
+        + name : string
+        + basePrice : int
+        + category : Category
+    }
+
+    class ItemFactory {
+        + createItem(name : string, basePrice : int, category : Category) Item
+    }
+
+    class ItemRepository {
+        - items : List~Item~
+        + addItem(item : Item) void
+        + getItemsByCategory(category : Category) List~Item~
+        + getItemByName(name : string) Item | null
+    }
+
+    ItemRepository "1" --* "*" Item
+
+    class Category {
+        + name : string
+        + parent : Category
+    }
+
+    class CategoryFactory {
+        + createCategory(name : string, parent : Category) Category
+    }
+
+    class CategoryRepository {
+        - categories : List~Category~
+        + addCategory(category : Category) void
+        + getCategoryByName(name : string) Category | null
+    }
+
+    CategoryRepository "1" --* "*" Category
+
+    Category "1" --o "*" Item
+    Category "*" --o "1" Category
+
+    class ORDER_TYPE {
+        <<enumeration>>
+        DINE_IN
+        TAKEOUT
+        DELIVERY
+    }
+
+    class Order {
+        + customerName : string
+        + date : Date
+        + totalAmount : int
+        + tip : int
+        + status : string
+        + orderType : ORDER_TYPE
+    }
+
+    class OrderItem {
+        + item: Item
+        + order: Order
+    }
+
+    Order "1" --o "*" OrderItem
+    Item "1" --o "*" OrderItem
+
+    class Menu {
+        + title : string
+        + description : string
+        + items : List~Item~
+    }
+
+    class MenuRepository {
+        - menus : List~Menu~
+        + addMenu(menu : Menu) void
+        + getAllMenus() List~Menu~
+    }
+
+    Menu "1" --o "*" Item
+
+    class CustomizationAddon {
+        + name : string
+        + item : Item
+        + isMandatory : bool
+        + options : List~CustomizationOption~
+    }
+
+    class CustomizationAddonRepository {
+        - addons : List~CustomizationAddon~
+        + addAddon(addon : CustomizationAddon) void
+        + getAddonsForItem(item : Item) List~CustomizationAddon~
+    }
+
+    Item "1" --o "*" CustomizationAddon
+
+    class CustomizationOption {
+        + value : string
+        + deltaPrice : int
+    }
+
+    CustomizationAddon "1" --o "*" CustomizationOption
+
+    class Event ~T~ {
+        <<abstract>>
+        # listeners : List~Listener~
+        # constructor() void
+        + subscribe(listener : Listener) void
+        + unsubscribe(listener : Listener) void
+        + notify(data : T) void
+    }
+
+    class Listener ~T~ {
+        <<interface>>
+        + update(data : T) void
+    }
+
+    class OrderReadyEvent {
+        + constructor() void
+    }
+
+    OrderReadyEvent ..|> Event~Order~
+
+    class Kitchen {
+        - instance : Kitchen
+        - constructor() void
+        - queue : List~Order~
+        + getInstance() Kitchen
+        - orderReadyEvent : OrderReadyEvent
+        - addOrder(order : Order) void
+        - processNextOrder() Order
+        - notifyOrderReady(order : Order) void
+    }
+
+    Kitchen "1" --* "1" OrderReadyEvent
+    Kitchen --|> Listener~Order~
+
+    class PaymentProcessor {
+        - instance : PaymentProcessor
+        - constructor() void
+        + getInstance() : PaymentProcessor
+        - paymentCredentials : UserPaymentCredentials
+        - PaymentCredentialsValidator : PaymentCredentialsValidator
+        + feedPaymentCredentials(credentials : UserPaymentCredentials) void
+        + processPayment(order : Order, paymentMethod : string) Payment
+    }
+
+    class UserPaymentCredentials {
+        <<interface>>
+    }
+
+    class CreditCardCredentials {
+        + cardNumber : string
+        + cardHolderName : string
+        + expiryDate : string
+        + cvv : string
+    }
+
+    class DigitalWalletCredentials {
+        + walletId : string
+        + provider : string
+    }
+
+    UserPaymentCredentials <|.. CreditCardCredentials
+    UserPaymentCredentials <|.. DigitalWalletCredentials
+
+    PaymentProcessor "1" --* "*" UserPaymentCredentials
+
+    class PaymentCredentialsValidator {
+        + static validate(credentials : UserPaymentCredentials) bool
+    }
+
+    class CreditCardValidator {
+        + static validate(credentials : CreditCardCredentials) bool
+    }
+
+    class DigitalWalletValidator {
+        + static validate(credentials : DigitalWalletCredentials) bool
+    }
+
+    CreditCardValidator ..> CreditCardCredentials
+    DigitalWalletValidator ..> DigitalWalletCredentials
+
+    PaymentProcessor -- PaymentCredentialsValidator
+    PaymentCredentialsValidator ..> CreditCardValidator
+    PaymentCredentialsValidator ..> DigitalWalletValidator
+
+    class Payment {
+        + order : Order
+        + transactionId : string
+        + amount : int
+        + method : string
+        + status : string
+    }
+
+    class PaymentMethod {
+        <<interface>>
+        + pay(amount : int) : Payment
+    }
+
+    class CreditCard {
+        + pay(amount : int) : Payment
+    }
+
+    class CashPayment {
+        + pay(amount : int) : Payment
+    }
+
+    class DigitalWallet {
+        + pay(amount : int) : Payment
+    }
+
+    PaymentMethod <|.. CreditCard
+    PaymentMethod <|.. CashPayment
+    PaymentMethod <|.. DigitalWallet
+
+    PaymentProcessor -- Payment
+    Order "1" --o "1" Payment
+
+    class Discount {
+        <<interface>>
+        + calculate(amount : int) int
+    }
