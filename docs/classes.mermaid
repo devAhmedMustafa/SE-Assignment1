@@ -17,15 +17,66 @@ classDiagram
         + onExit() void
     }
 
+    class LoginState {
+    }
+    class LogoutState {
+    }
+    class ManagerDashboardState {
+    }
+    class CustomerDashboardState {
+    }
+    class AddItemState {
+    }
+    class ViewOrdersState {
+    }
+    class BrowseMenusState {
+    }
+    class ViewCartState {
+    }
+    class AddItemToCartState {
+    }
+    class CheckoutState {
+    }
+    class PaymentProcessingState {
+    }
+    class OrderConfirmationState {
+    }
+
+    AppState <|.. LoginState
+    AppState <|.. LogoutState
+    AppState <|.. ManagerDashboardState
+    AppState <|.. CustomerDashboardState
+    AppState <|.. AddItemState
+    AppState <|.. ViewOrdersState
+    AppState <|.. BrowseMenusState
+    AppState <|.. ViewCartState
+    AppState <|.. AddItemToCartState
+    AppState <|.. CheckoutState
+    AppState <|.. PaymentProcessingState
+    AppState <|.. OrderConfirmationState
+
     class STATE {
         <<enumeration>>
-
+        LOGIN
+        LOGOUT
+        MANAGER_DASHBOARD
+        CUSTOMER_DASHBOARD
+        ADD_ITEM
+        VIEW_ORDERS
+        BROWSE_MENUS
+        VIEW_CART
+        ADD_ITEM_TO_CART
+        CHECKOUT
+        PAYMENT_PROCESSING
+        ORDER_CONFIRMATION
     }
 
     class StateMapper {
         + stateMap : Map~STATE, AppState~
         + getState(stateName : STATE) AppState
     }
+
+    StateMapper "1" --* "*" AppState
 
     AppMachine "1" -- "1" AppState
     AppMachine -- StateMapper
@@ -106,8 +157,15 @@ classDiagram
         - instance : CheckoutManager
         - constructor() void
         + getInstance() CheckoutManager
+        - placeOrderEvent : PlaceOrderEvent
         + checkout(customerName : string, orderType : ORDER_TYPE, paymentMethod: string) void
     }
+
+    class PlaceOrderEvent {
+        + constructor() void
+    }
+
+    CheckoutManager "1" --* "1" PlaceOrderEvent
 
     CheckoutManager -- Cart
     CheckoutManager -- PaymentProcessor
@@ -121,6 +179,8 @@ classDiagram
     class ItemFactory {
         + createItem(name : string, basePrice : int, category : Category) Item
     }
+
+    ItemFactory -- Item
 
     class ItemRepository {
         - items : List~Item~
@@ -139,6 +199,9 @@ classDiagram
     class CategoryFactory {
         + createCategory(name : string, parent : Category) Category
     }
+
+    CategoryFactory -- Category
+    CategoryFactory -- CategoryRepository
 
     class CategoryRepository {
         - categories : List~Category~
@@ -181,6 +244,12 @@ classDiagram
         + items : List~Item~
     }
 
+    class MenuFactory {
+        + createMenu(title : string, description : string, items : List~Item~) Menu
+    }
+
+    MenuFactory -- Menu
+
     class MenuRepository {
         - menus : List~Menu~
         + addMenu(menu : Menu) void
@@ -211,7 +280,7 @@ classDiagram
 
     CustomizationAddon "1" --o "*" CustomizationOption
 
-    class Event ~T~ {
+    class Event ~EventPayload~ {
         <<abstract>>
         # listeners : List~Listener~
         # constructor() void
@@ -220,35 +289,64 @@ classDiagram
         + notify(data : T) void
     }
 
-    class Listener ~T~ {
+    class EventPayload {
+        <<interface>>
+    }
+
+    Event ..> EventPayload
+
+    class EventFactory {
+        - instance : EventFactory
+        - constructor() void
+        + getInstance() : EventFactory
+
+        - eventMap : Map~string, Event~
+        + getEvent(eventName : string) : Event~
+    }
+
+    EventFactory "1" --* "*" Event
+
+    class Listener ~EventPayload~ {
         <<interface>>
         + update(data : T) void
     }
 
-    class OrderReadyEvent {
-        + constructor() void
+    PlaceOrderEvent ..|> Event~Order~
+
+    class PlaceOrderListener {
+        <<interface>>
+        + update(data : PlaceOrderPayload) void
     }
 
-    OrderReadyEvent ..|> Event~Order~
+    class PlaceOrderPayload {
+        + order : Order
+    }
+
+    PlaceOrderEvent -- PlaceOrderListener
+    PlaceOrderListener ..> PlaceOrderPayload
+    PlaceOrderEvent ..> PlaceOrderPayload
 
     class Kitchen {
         - instance : Kitchen
         - constructor() void
-        - queue : List~Order~
         + getInstance() Kitchen
-        - orderReadyEvent : OrderReadyEvent
+
+        - queue : List~Order~
+
         - addOrder(order : Order) void
         - processNextOrder() Order
         - notifyOrderReady(order : Order) void
+
+        + update(data : PlaceOrderPayload) void
     }
 
-    Kitchen "1" --* "1" OrderReadyEvent
-    Kitchen --|> Listener~Order~
+    Kitchen --|> PlaceOrderListener : implements
+    Kitchen -- EventFactory
 
     class PaymentProcessor {
         - instance : PaymentProcessor
         - constructor() void
-        + getInstance() : PaymentProcessor
+        + getInstance() PaymentProcessor
         - paymentCredentials : UserPaymentCredentials
         - PaymentCredentialsValidator : PaymentCredentialsValidator
         + feedPaymentCredentials(credentials : UserPaymentCredentials) void
@@ -305,19 +403,19 @@ classDiagram
 
     class PaymentMethod {
         <<interface>>
-        + pay(amount : int) : Payment
+        + pay(amount : int) int
     }
 
     class CreditCard {
-        + pay(amount : int) : Payment
+        + pay(amount : int) int
     }
 
     class CashPayment {
-        + pay(amount : int) : Payment
+        + pay(amount : int) int
     }
 
     class DigitalWallet {
-        + pay(amount : int) : Payment
+        + pay(amount : int) int
     }
 
     PaymentMethod <|.. CreditCard
@@ -331,3 +429,16 @@ classDiagram
         <<interface>>
         + calculate(amount : int) int
     }
+
+    class Repository ~T K~ {
+        <<interface>>
+        + add(item : T) void
+        + get(id : K) T | null
+        + getAll() List~T~
+        + remove(id : K) void
+    }
+
+    Repository <|.. ItemRepository~Item string~
+    Repository <|.. CategoryRepository~Category string~
+    Repository <|.. MenuRepository~Menu string~
+    Repository <|.. CustomizationAddonRepository~CustomizationAddon string~

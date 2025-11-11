@@ -1,0 +1,23 @@
+stateDiagram-v2
+    [*] --> Login
+
+    Login --> ManagerDashboard : Username = "admin"
+    Login --> CustomerDashboard : Username != "admin"
+
+    ManagerDashboard --> AddItem : Selects "Add Item"
+    ManagerDashboard --> ViewOrders : Selects "View Orders"
+    ViewOrders --> ManagerDashboard : Selects "Back to Dashboard"
+    ManagerDashboard --> Logout : Selects "Logout"
+
+    CustomerDashboard --> BrowseMenus : Selects "Browse Menus"
+    CustomerDashboard --> ViewCart : Selects "View Cart"
+    ViewCart --> CustomerDashboard : Selects "Back to Dashboard"
+    CustomerDashboard --> AddItemToCart : Selects "Add Item to Cart"
+    AddItemToCart --> CustomerDashboard : Item Added || Cancelled
+    CustomerDashboard --> Checkout : Selects "Checkout"
+    Checkout --> PaymentProcessing : Proceeds to Payment
+    PaymentProcessing --> OrderConfirmation : Payment Successful
+    OrderConfirmation --> CustomerDashboard : Returns to Dashboard
+    CustomerDashboard --> Logout : Selects "Logout"
+
+    Logout --> [*]
