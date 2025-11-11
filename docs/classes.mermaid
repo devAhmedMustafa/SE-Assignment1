@@ -117,7 +117,7 @@ classDiagram
     CommandMapper "1" -- "1" ItemUI
 
     class ItemUI {
-        + addItem(name : string, basePrice : int, category : Category) Item
+        + addItem(name : string, basePrice : int, category : String) void
     }
 
     ItemUI -- ItemRepository

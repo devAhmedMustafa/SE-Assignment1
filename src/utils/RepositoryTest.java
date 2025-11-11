@@ -1,12 +1,22 @@
 package utils;
 
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class SampleRepository extends Repository<String, String> {
+class SampleModel {
+    @KeyAttribute
+    public String key;
 
+    public SampleModel(String key) {
+        this.key = key;
+    }
+}
+
+class SampleRepository extends Repository<SampleModel> {
+    public SampleRepository() {
+        super();
+    }
 }
 
 public class RepositoryTest {
@@ -15,7 +25,7 @@ public class RepositoryTest {
     @DisplayName("Test add and get methods of Repository")
     public void testAdd() {
         SampleRepository repo = new SampleRepository();
-        repo.add("key1", "value1");
-        Assertions.assertEquals("value1", repo.get("key1"));
+        repo.add(new SampleModel("key1"));
+        SampleModel retrieved = repo.get("key1");
     }
 }

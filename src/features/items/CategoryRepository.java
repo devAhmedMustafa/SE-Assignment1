@@ -2,7 +2,7 @@ package features.items;
 
 import utils.Repository;
 
-public class CategoryRepository extends Repository<Category, String> {
+public class CategoryRepository extends Repository<Category> {
 
     private static CategoryRepository instance = null;
 
