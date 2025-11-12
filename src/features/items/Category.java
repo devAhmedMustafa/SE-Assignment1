@@ -22,4 +22,8 @@ public class Category {
             temp = temp.parent;
         }
     }
+
+    public String getId() {
+        return _id;
+    }
 }

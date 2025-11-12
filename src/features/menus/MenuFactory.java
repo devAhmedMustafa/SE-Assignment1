@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MenuFactory {
-    public Menu createMenu(String title, String description, List<String> itemNames) {
+    public static Menu createMenu(String title, String description, List<String> itemNames) {
 
         List<Item> items = new ArrayList<>();
         ItemRepository itemRepository = ItemRepository.getInstance();
@@ -19,6 +19,8 @@ public class MenuFactory {
                 Logger.log("Item not found: " + itemName, Color.YELLOW);
                 continue;
             }
+
+            Logger.log("Adding item to menu: " + itemName, Color.GREEN);
 
             items.add(item);
         }

@@ -1,5 +1,7 @@
 package features.customizationAddons;
 
+import utils.PriceAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +18,7 @@ public class CustomizationOptionParser {
                 String optionName = parts[0].trim();
                 int optionPrice;
                 try {
-                    optionPrice = Integer.parseInt(parts[1].trim());
+                    optionPrice = PriceAdapter.floatToCents(Float.parseFloat(parts[1].trim()));
                 } catch (NumberFormatException e) {
                     continue;
                 }

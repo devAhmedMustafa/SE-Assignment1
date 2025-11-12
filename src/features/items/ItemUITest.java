@@ -54,6 +54,19 @@ public class ItemUITest {
         clearRepositories();
     }
 
+    @Test
+    @DisplayName("Add multiple Items and Categories")
+    public void Case6() {
+        ItemUI itemUI = new ItemUI();
+        itemUI.addCategory("Category1");
+        itemUI.addCategory("Category2", "Category1");
+        itemUI.addItem("Item1", 150, "Category1");
+        itemUI.addItem("Item2", 250, "Category1>Category2");
+        Assertions.assertEquals(2, CategoryRepository.getInstance().size());
+        Assertions.assertEquals(2, ItemRepository.getInstance().size());
+        clearRepositories();
+    }
+
     private void clearRepositories() {
         ItemRepository.getInstance().clear();
         CategoryRepository.getInstance().clear();
