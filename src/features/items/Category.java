@@ -1,6 +1,6 @@
 package features.items;
 
-import utils.KeyAttribute;
+import utils.storage.KeyAttribute;
 
 public class Category {
 
@@ -21,6 +21,10 @@ public class Category {
             _id = temp.name + ">" + _id;
             temp = temp.parent;
         }
+    }
+
+    public Category(String name) {
+        this(name, null);
     }
 
     public String getId() {

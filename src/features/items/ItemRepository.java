@@ -1,6 +1,6 @@
 package features.items;
 
-import utils.Repository;
+import utils.storage.Repository;
 
 public class ItemRepository extends Repository<Item> {
     private static ItemRepository instance;

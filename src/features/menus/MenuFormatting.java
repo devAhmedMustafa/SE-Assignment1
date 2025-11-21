@@ -1,7 +1,9 @@
-package utils;
+package features.menus;
 
 import features.items.Category;
 import features.items.Item;
+import utils.debug.Logger;
+import utils.parsers.PriceParser;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -40,7 +42,7 @@ public class MenuFormatting {
                 suffix.append(whitespace).append("  * ")
                         .append(item.name)
                         .append(" : ")
-                        .append(PriceAdapter.centsToString(item.basePrice))
+                        .append(PriceParser.centsToString(item.basePrice))
                         .append("\n");
 
                 iterator.remove();

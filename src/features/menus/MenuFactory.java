@@ -2,7 +2,7 @@ package features.menus;
 
 import features.items.Item;
 import features.items.ItemRepository;
-import utils.Logger;
+import utils.debug.Logger;
 
 import java.awt.*;
 import java.util.ArrayList;

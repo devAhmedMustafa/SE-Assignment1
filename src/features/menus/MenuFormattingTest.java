@@ -1,4 +1,4 @@
-package utils;
+package features.menus;
 
 import features.items.Category;
 import features.items.Item;

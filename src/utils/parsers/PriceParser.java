@@ -1,6 +1,6 @@
-package utils;
+package utils.parsers;
 
-public class PriceAdapter {
+public class PriceParser {
     public static int floatToCents(float price) {
         return Math.round(price * 100);
     }

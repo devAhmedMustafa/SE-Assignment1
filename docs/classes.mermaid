@@ -81,41 +81,6 @@ classDiagram
     AppMachine "1" -- "1" AppState
     AppMachine -- StateMapper
 
-    class UI {
-        - instance : UI
-        - constructor() void
-        + getInstance() UI
-
-        - mode : bool
-
-        - parser : CommandParser
-        - commandMapper : CommandMapper
-
-        + promptUserInput(prompt : string) void
-    }
-
-    UI "1" -- "1" CommandParser
-    UI "1" -- "1" CommandMapper
-
-    class CommandParser {
-        - command: string
-        - arguments: List~string~
-        + parseCommand(command : string) void
-        + getCommand() string
-        + getArguments() List~string~
-    }
-
-    class CommandMapper {
-        - menuUI : MenuUI
-        - cartUI : CartUI
-        - itemUI : ItemUI
-        + commandMap : Map~string, Function~
-    }
-
-    CommandMapper "1" -- "1" MenuUI
-    CommandMapper "1" -- "1" CartUI
-    CommandMapper "1" -- "1" ItemUI
-
     class ItemUI {
         + addItem(name : string, basePrice : int, category : String) void
     }
@@ -222,6 +187,7 @@ classDiagram
     }
 
     class Order {
+        - id : string
         + customerName : string
         + date : Date
         + totalAmount : int
@@ -286,7 +252,7 @@ classDiagram
         # constructor() void
         + subscribe(listener : Listener) void
         + unsubscribe(listener : Listener) void
-        + notify(data : T) void
+        + notify(data : EventPayload) void
     }
 
     class EventPayload {
@@ -348,7 +314,6 @@ classDiagram
         - constructor() void
         + getInstance() PaymentProcessor
         - paymentCredentials : UserPaymentCredentials
-        - PaymentCredentialsValidator : PaymentCredentialsValidator
         + feedPaymentCredentials(credentials : UserPaymentCredentials) void
         + processPayment(order : Order, paymentMethod : string) Payment
     }
@@ -386,12 +351,18 @@ classDiagram
         + static validate(credentials : DigitalWalletCredentials) bool
     }
 
+    class PaymentValidatorFactory {
+        + static getValidator(paymentMethod: string) PaymentCredentialsValidator
+    }
+
     CreditCardValidator ..> CreditCardCredentials
     DigitalWalletValidator ..> DigitalWalletCredentials
 
     PaymentProcessor -- PaymentCredentialsValidator
     PaymentCredentialsValidator ..> CreditCardValidator
     PaymentCredentialsValidator ..> DigitalWalletValidator
+
+    PaymentValidatorFactory ..> PaymentCredentialsValidator
 
     class Payment {
         + order : Order

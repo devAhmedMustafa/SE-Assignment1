@@ -1,6 +1,6 @@
 package features.items;
 
-import utils.KeyAttribute;
+import utils.storage.KeyAttribute;
 
 public class Item {
 

@@ -1,6 +1,6 @@
 package features.items;
 
-import utils.Repository;
+import utils.storage.Repository;
 
 public class CategoryRepository extends Repository<Category> {
 

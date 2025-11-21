@@ -2,8 +2,7 @@ package features.menus;
 
 import features.items.Category;
 import features.items.Item;
-import utils.Logger;
-import utils.MenuFormatting;
+import utils.debug.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;

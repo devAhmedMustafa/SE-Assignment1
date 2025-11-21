@@ -1,6 +1,6 @@
 package features.customizationAddons;
 
-import utils.Logger;
+import utils.debug.Logger;
 
 import java.awt.*;
 import java.util.List;

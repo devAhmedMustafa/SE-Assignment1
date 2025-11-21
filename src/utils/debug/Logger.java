@@ -1,4 +1,4 @@
-package utils;
+package utils.debug;
 
 import java.awt.*;
 

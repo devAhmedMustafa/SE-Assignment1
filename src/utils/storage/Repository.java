@@ -1,4 +1,6 @@
-package utils;
+package utils.storage;
+
+import utils.debug.Logger;
 
 import java.awt.*;
 import java.lang.reflect.Field;

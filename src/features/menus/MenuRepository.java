@@ -1,6 +1,6 @@
 package features.menus;
 
-import utils.Repository;
+import utils.storage.Repository;
 
 public class MenuRepository extends Repository<Menu> {
     private static MenuRepository instance = null;

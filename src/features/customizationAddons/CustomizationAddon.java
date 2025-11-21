@@ -1,7 +1,7 @@
 package features.customizationAddons;
 
 import features.items.Item;
-import utils.KeyAttribute;
+import utils.storage.KeyAttribute;
 
 import java.util.List;
 

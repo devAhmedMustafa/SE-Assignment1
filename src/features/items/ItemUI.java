@@ -1,7 +1,7 @@
 package features.items;
 
-import utils.Logger;
-import utils.PriceAdapter;
+import utils.debug.Logger;
+import utils.parsers.PriceParser;
 
 import java.awt.*;
 
@@ -11,7 +11,7 @@ public class ItemUI {
         try {
             Logger.log("Adding " + itemName + " to the item list", Color.BLUE);
 
-            Item addedItem = ItemFactory.createItem(itemName, PriceAdapter.floatToCents(basePrice), category);
+            Item addedItem = ItemFactory.createItem(itemName, PriceParser.floatToCents(basePrice), category);
             ItemRepository.getInstance().add(addedItem);
 
             Logger.log("Item added to the item list", Color.GREEN);
