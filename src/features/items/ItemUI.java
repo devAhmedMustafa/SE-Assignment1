@@ -21,6 +21,20 @@ public class ItemUI {
         }
     }
 
+    public String showAllItems() {
+        try {
+            StringBuilder itemListStr = new StringBuilder();
+            for (Item item : ItemRepository.getInstance().getAll()) {
+                itemListStr.append(item.toString()).append("\n");
+            }
+            return itemListStr.toString();
+        }
+        catch (Exception e) {
+            Logger.log("Error retrieving items: " + e.getMessage(), Color.RED);
+            return "Error retrieving items.";
+        }
+    }
+
     public void addCategory(String categoryName, String parentCategoryName) {
         try {
             Logger.log("Adding new category: " + categoryName, Color.BLUE);
