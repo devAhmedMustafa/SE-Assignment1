@@ -2,12 +2,17 @@ package machine;
 
 public enum STATES {
     LOGIN,
+
     MANAGER_DASHBOARD,
     ADD_ITEM_CATEGORY,
     ADD_NEW_ITEM,
     VIEW_ALL_MENUS,
     DISPLAY_MENU,
     ADD_NEW_MENU,
+
     CUSTOMER_DASHBOARD,
+    ADD_TO_CART,
+    CHECKOUT,
+
     LOGOUT,
 }

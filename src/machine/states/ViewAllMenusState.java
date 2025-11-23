@@ -1,4 +1,4 @@
-package machine.states.manager;
+package machine.states;
 
 import features.menus.MenuUI;
 import machine.AppMachine;
